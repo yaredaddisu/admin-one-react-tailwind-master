@@ -59,21 +59,19 @@ export type Transaction = {
  
 export type Client = {
   id: number
-  avatar: string
-  chat_id: string
-  lastName: string
-  firstName: string
-  phone: string
-  email: string
-  latitude: number
-  longitude: string
-  skills: string
-  experience: string
-  status: string
-  role: string
-  availability: string
-  username: string
-  created_at: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  chat_id: string;
+  username: string;
+  role: string;
+  status: string;
+  availability: string;
+  skills: any[];
+  experience: string;
+
 
 }
 
@@ -81,3 +79,22 @@ export type UserForm = {
   name: string
   email: string
 }
+
+// types.ts
+
+export interface User {
+  id: string; // Adjust the type as per your API response
+  firstName: string,
+  lastName: string,
+  email: string,
+  phone: string,
+  password: string,
+  chat_id: string,
+  username: string,
+  role: string,
+  status: string,
+  availability: string,
+}
+
+// Optionally, you can define the registration user type without id
+export type RegisterUser = Omit<User, 'id'>;

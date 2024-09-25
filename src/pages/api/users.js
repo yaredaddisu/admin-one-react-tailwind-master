@@ -134,6 +134,46 @@ if (req.method === 'GET') {
     });
   }
 }
+
+
+ 
+  if (req.method === 'PUT') {
+  
+   // Assuming you are using query params for the user ID (Next.js)
+    const updatedData = req.body;
+    const userId = updatedData.id; 
+   console.log(userId);
+    try {
+      // Assuming `updateUser` is an async function that updates the user and returns the updated record.
+      const updatedUser = await updateUser(userId, updatedData);
+
+      if (updatedUser) {
+        // Send the updated user in the requested format: data.data
+        res.status(200).json({
+          success: true,
+          data: {
+            data: updatedUser // Return the updated user data
+          }
+        });
+      } else {
+        res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message: 'An error occurred while updating the user: ' + err.message
+      });
+    }
+  } else {
+    res.status(405).json({ success: false, message: 'Method Not Allowed' });
+  }
+ 
+
+
+
   }
 
  

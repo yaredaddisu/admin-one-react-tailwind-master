@@ -4,7 +4,26 @@ import CardBox from './CardBox';
 import LayoutAuthenticated from '../layouts/Authenticated';
 import { useDispatch } from 'react-redux';
 import { registerUser, updateUser } from '../store/authSlice'; // Import your Redux actions
-
+import axios from 'axios';
+import { Field } from 'formik';
+import FormCheckRadio from './Form/CheckRadio';
+import FormCheckRadioGroup from './Form/CheckRadioGroup';
+interface UserFormData {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  password: string;
+  chat_id: string;
+  username: string;
+  role: string;
+  status: string;
+  availability: string;
+  skills: any[];
+  experience: string;
+ 
+}
 const RegistrationForm = ({ userData, onClose, getUsers }) => {
   const roles = [
     { id: 1, role: 'Admin' },
@@ -12,28 +31,46 @@ const RegistrationForm = ({ userData, onClose, getUsers }) => {
     { id: 3, role: 'Technician' },
   ];
 
-  const [formData, setFormData] = useState({
-    id: null,
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    chat_id: '',
-    username: '',
-    role: '3',
-    status: '1',
-    availability: '1',
-  });
+ 
+  const skillsOptions = [
+    { id: 1, name: "Others" },
+    { id: 2, name: "TV" },
+    { id: 3, name: "Washing Machine" },
+    { id: 4, name: "Dish Expert" },
+    { id: 5, name: "Fridge Expert" },
+    { id: 6, name: "Electrician" },
+  ];
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+
+// In your component or context where formData is defined
+const [formData, setFormData] = useState<UserFormData>({
+  id: '',
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  password: '',
+  chat_id: '',
+  username: '',
+  role: '',
+  status: '1',
+  availability: '1',
+  skills: [],
+  experience: ' '
+});
+
+
 
   const [errors, setErrors] = useState({});
   const [isLoading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const dispatch = useDispatch(); // Initialize dispatch
-
+ 
   useEffect(() => {
     if (userData) {
+      setIsEditing(true);
       setFormData({
         id: userData.id || null,
         firstName: userData.firstName || '',
@@ -46,7 +83,12 @@ const RegistrationForm = ({ userData, onClose, getUsers }) => {
         role: userData.role || '1',
         status: userData.status || '1',
         availability: userData.availability || '1',
+        skills: userData.skills || [],
+        experience: userData.experience || ' '
       });
+
+      // Pre-fill selected skills
+      setSelectedOptions(userData.skills || []);
     }
   }, [userData]);
 
@@ -61,7 +103,24 @@ const RegistrationForm = ({ userData, onClose, getUsers }) => {
       status: prevData.status === '1' ? '0' : '1',
     }));
   };
-
+    // Synchronize selectedOptions with formData.skills
+    useEffect(() => {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        skills: selectedOptions, // Update skills in formData
+      }));
+    }, [selectedOptions]);
+  // Handle skill checkbox toggle
+  const handleCheckboxChange = (option) => {
+    const skillIndex = selectedOptions.findIndex((item) => item.id === option.id);
+    if (skillIndex > -1) {
+      // Remove if already selected
+      setSelectedOptions(selectedOptions.filter((item) => item.id !== option.id));
+    } else {
+      // Add the selected skill
+      setSelectedOptions([...selectedOptions, option]);
+    }
+  };
   const handleTogglevailability = () => {
     setFormData((prevData) => ({
       ...prevData,
@@ -72,33 +131,81 @@ const RegistrationForm = ({ userData, onClose, getUsers }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    
     const userPayload = { ...formData };
 
-    const action = formData.id ? updateUser : registerUser; // Choose action based on existence of ID
-    const apiCall = formData.id 
-      ? dispatch(action({ id: formData.id, ...userPayload })) // Update user
-      : dispatch(action(userPayload)); // Register user
-
-    apiCall.then((res) => {
-      setLoading(false);
-      console.log(res.error)
-      if(!res.error){
-        setSuccess(res.message); // Set success message
-        getUsers(); // Refresh user list
-        onClose(); // Close form
-      }
-    
-    }).catch((err) => {
-      setLoading(false);
-      if (err.response && err.response.status === 422) {
-        setErrors(err.response.data.errors); // Handle validation errors
-      } else {
-        setErrors({ general: 'An error occurred. Please try again.' }); // General error
-      }
-    });
+    if (formData.id) {
+      axios.put(`/api/users`, userPayload)
+        .then((res) => {
+          
+          setLoading(false);
+          getUsers();
+          resetFormData()
+          setSuccess(res.data.message);
+          onClose();
+        })
+        .catch((err) => {
+          const response = err.response;
+          if (response && response.status === 422) {
+            const errors = response.data.errors;
+          
+            // Iterate over each field in the errors object
+            Object.keys(errors).forEach((field) => {
+              // Each field contains an array of error messages, loop through the array
+              errors[field].forEach((errorMessage) => {
+               
+              });
+            });
+          }
+          
+          setLoading(false);
+        });
+    } else {
+      axios.post('/api/users', userPayload)
+        .then((res) => {
+         
+          setLoading(false);
+          getUsers();
+          resetFormData()
+          setSuccess(res.data.message);
+          onClose();
+        })
+        .catch((err) => {
+          const response = err.response;
+           if (response && response.status === 422) {
+            const errors = response.data.errors;
+          
+            // Iterate over each field in the errors object
+            Object.keys(errors).forEach((field) => {
+              // Each field contains an array of error messages, loop through the array
+              errors[field].forEach((errorMessage) => {
+               
+              });
+            });
+          }
+          
+          setLoading(false);
+        });
+    }
   };
 
+// Reset function
+const resetFormData = () => {
+  setFormData({ 
+    id: '', 
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    chat_id: '', // Resetting the field
+    username: '', // Resetting the field
+    role: '',
+    status: '',
+    availability: '',
+    skills: [] ,
+    experience: '', 
+  });
+}
   // Clear messages after a timeout
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -111,7 +218,7 @@ const RegistrationForm = ({ userData, onClose, getUsers }) => {
   return (
     <CardBox>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {errors.general && <div className="alert">{errors.general}</div>}
+        {/* {errors.general && <div className="alert">{errors.general}</div>} */}
         {success && (
           <div>
             <span className="inline-flex w-full items-center justify-center px-3 py-1 text-sm font-medium text-white bg-green-500 rounded-full">
@@ -189,6 +296,8 @@ const RegistrationForm = ({ userData, onClose, getUsers }) => {
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             required
           />
+            
+       
           <select
             name="role"
             value={formData.role}
@@ -202,7 +311,32 @@ const RegistrationForm = ({ userData, onClose, getUsers }) => {
             ))}
           </select>
         </FormField>
-
+        <div>
+           <h2>Select Your Expertise</h2>
+       
+          {skillsOptions.map((option) => (
+            <div key={option.id} className="checkbox-item">
+              <input
+                type="checkbox"
+                id={`skill_${option.id}`}
+                value={option.name}
+                checked={selectedOptions.some((item) => item.id === option.id)}
+                onChange={() => handleCheckboxChange(option)} />
+              <label htmlFor={`skill_${option.id}`}>{option.name}</label>
+            </div>
+          ))}
+      
+        </div>
+        <FormField>
+          <input
+            type="number"
+            name="experience"
+            value={formData.experience}
+            onChange={handleChange}
+            placeholder="Experience"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          </FormField>
         {userData && (
           <>
             <div className="flex items-center mb-4">

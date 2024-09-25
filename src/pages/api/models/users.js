@@ -4,11 +4,11 @@ import pool from '../../../lib/db';
 const bcrypt = require('bcryptjs');
 
 const createUser = async (users) => {
-    const { firstName, lastName, email, phone, password, chat_id, username, role, status, availability, skills } = users;
+    const { firstName, lastName, email, phone, password, chat_id, username, role, status, availability,experience, skills } = users;
     const skillsJson = JSON.stringify(skills); // Convert skills array to JSON string
     const hashedPassword = await bcrypt.hash(password, 10);
      
-    const query = 'INSERT INTO users (firstName, lastName, email, phone, password, chat_id, username, role, status, availability, skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const query = 'INSERT INTO users (firstName, lastName, email, phone, password, chat_id, username, role, status, availability,experience, skills) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)';
    // Basic validation for required fields
     const errors = [];
  
@@ -50,6 +50,8 @@ const createUser = async (users) => {
                role  || null, 
                status  || null,
                 availability  || null,
+                experience  || null,
+
                  skillsJson || null,
                 
                 ]);
@@ -71,85 +73,108 @@ const createUser = async (users) => {
       WHERE firstName LIKE ?
       LIMIT ? OFFSET ?
     `;
-  
+
     try {
-      const [rows] = await pool.execute(query, [searchTerm, pageSize, offset]);
-  
-      // Process each row to parse the skills JSON string
-      const users = rows.map(user => {
-        // Parse skills JSON string into an array of objects
-        // user.skills = JSON.parse(user.skills);
-        // Array.isArray(user.skills) ? JSON.parse(user.skills) : [];
-        return user;
-      });
-  
-      return users;
+        const [rows] = await pool.execute(query, [searchTerm, pageSize, offset]);
+
+        // Process each row to parse the skills JSON string
+        const users = rows.map(user => {
+            // Check if skills field exists and is a valid JSON string before parsing
+            try {
+                user.skills = user.skills ? JSON.parse(user.skills) : []; // Default to empty array if null
+            } catch (error) {
+                console.error('Error parsing skills for user:', user.id, error);
+                user.skills = []; // Default to empty array on parse error
+            }
+            return user;
+        });
+
+        return users;
     } catch (err) {
-      console.error('Error retrieving data: ', err);
-      throw new Error('Database error');
+        console.error('Error retrieving data: ', err);
+        throw new Error('Database error');
     }
-  };
+};
+
   
 async function updateUser(userId, updatedData) {
-    // Basic validation for required fields
-    const errors = [];
-    const skillsJson = JSON.stringify(updatedData.skills); // Convert skills array to JSON string
-    const hashedPassword = await bcrypt.hash(updatedData.password, 10);
+  // Basic validation for required fields
+  const errors = [];
+  const skillsJson = JSON.stringify(updatedData.skills ?? []); // Default to empty array if undefined
+  let hashedPassword;
 
-    if (!updatedData.firstName || updatedData.firstName.trim() === "") {
+  // Validate inputs
+  if (!updatedData.firstName || updatedData.firstName.trim() === "") {
       errors.push("First name is required.");
-    }
-    if (!updatedData.lastName || updatedData.lastName.trim() === "") {
+  }
+  if (!updatedData.lastName || updatedData.lastName.trim() === "") {
       errors.push("Last name is required.");
-    }
-    if (!updatedData.email || !validateEmail(updatedData.email)) {
+  }
+  if (!updatedData.email || !validateEmail(updatedData.email)) {
       errors.push("Valid email is required.");
-    }
-    if (!updatedData.phone || !validatePhone(updatedData.phone)) {
+  }
+  if (!updatedData.phone || !validatePhone(updatedData.phone)) {
       errors.push("Valid phone number is required.");
-    }
-    if (!["1", "0"].includes(updatedData.status)) {
+  }
+  if (!["1", "0"].includes(updatedData.status)) {
       errors.push("Status must be either 'active' or 'inactive'.");
-    }
-    if (!["1", "2", "3"].includes(updatedData.role)) {
+  }
+  if (!["1", "2", "3"].includes(updatedData.role)) {
       errors.push("Role must be either 'admin', 'user', or 'guest'.");
-    }
-  
-    // If validation errors exist, return the errors
-    if (errors.length > 0) {
+  }
+
+  // If validation errors exist, return the errors
+  if (errors.length > 0) {
       return { success: false, errors };
-    }
-  
-    // Proceed with the update if validation passes
-    try {
+  }
+
+  // Proceed with the update if validation passes
+  try {
+      // Fetch the existing user data
+      const [existingUser] = await pool.execute('SELECT * FROM users WHERE id = ?', [userId]);
+      if (existingUser.length === 0) {
+          return { success: false, message: 'User not found.' };
+      }
+
+      // Use existing password if no new password is provided
+      if (updatedData.password) {
+          hashedPassword = await bcrypt.hash(updatedData.password, 10);
+      } else {
+          hashedPassword = existingUser[0].password; // Use the existing password hash
+      }
+
+      // Assign null for any missing values
       const [result] = await pool.execute(
-        'UPDATE users SET firstName = ?, lastName = ?, email = ?, phone = ?, status = ?, role = ?,availability = ?, skills = ?, password = ? WHERE id = ?',
-        [
-          updatedData.firstName,
-          updatedData.lastName,
-          updatedData.email,
-          updatedData.phone,
-          updatedData.status,
-          updatedData.role,
-          updatedData.availability,
-          skillsJson,
-          hashedPassword,
-          userId
-        ]
+          'UPDATE users SET firstName = ?, lastName = ?, email = ?, phone = ?, status = ?, role = ?, availability = ?, experience = ?, skills = ?, password = ? WHERE id = ?',
+          [
+              updatedData.firstName ?? null,
+              updatedData.lastName ?? null,
+              updatedData.email ?? null,
+              updatedData.phone ?? null,
+              updatedData.status ?? null,
+              updatedData.role ?? null,
+              updatedData.availability ?? null,
+              updatedData.experience ?? null,
+              skillsJson ?? null,
+              hashedPassword,
+              userId
+          ]
       );
-  
+
       // If the update was successful, fetch the updated record
       if (result.affectedRows > 0) {
-        const [updatedUser] = await pool.execute('SELECT * FROM users WHERE id = ?', [userId]);
-        return { success: true, user: updatedUser[0],message: 'Updated successfully.'  }; // Return the first user in the result
+          const [updatedUser] = await pool.execute('SELECT * FROM users WHERE id = ?', [userId]);
+          return { success: true, user: updatedUser[0], message: 'Updated successfully.' };
       }
-  
+
       return { success: false, message: 'User not found or no changes made.' };
-    } catch (err) {
+  } catch (err) {
       console.error('Error updating user:', err);
-      return { success: false, message: `Database error: ${err.message}` }; 
-    }
+      return { success: false, message: `Database error: ${err.message}` };
   }
+}
+
+  
   
   // Email validation helper function
   function validateEmail(email) {

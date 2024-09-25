@@ -56,7 +56,7 @@ const TableSampleClients = () => {
 
   const [isModalInfoActive, setIsModalInfoActive] = useState(false)
   const [isModalTrashActive, setIsModalTrashActive] = useState(false)
-  const [userData, setUser] = useState([]);
+const [userData, setUser] = useState<Client | null>(null); // Use null or initial value as needed
 
   const handleModalAction = () => {
     setIsModalInfoActive(false)
@@ -64,14 +64,15 @@ const TableSampleClients = () => {
   }
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  function editUser(client): void {
-     
-    setIsModalOpen(true);
-    setUser(client);
-  }
+  function editUser(client: Client): void {
+    setIsModalOpen(true); // Open the modal for editing
+    setUser(client);      // Set the user data in the state for editing
+}
+
   const closeModal = () => {
     getUsers();
     setIsModalOpen(false);
+    setUser(null); 
   };
 
   return (
@@ -88,7 +89,7 @@ const TableSampleClients = () => {
           onClick={() => setIsModalOpen(true)} />
       </SectionTitleLineWithButton>
     </div><><Modal isOpen={isModalOpen} onClose={closeModal}>
-      <RegistrationForm userData={userData} onClose={closeModal} getUsers={getUsers} />
+      <RegistrationForm userData={userData} onClose={closeModal} getUsers={getUsers}   />
     </Modal>
 
         <CardBoxModal
@@ -130,13 +131,21 @@ const TableSampleClients = () => {
         <table>
           <thead>
             <tr>
-              <th />
-              <th>Name</th>
-              <th>Company</th>
-              <th>City</th>
-              <th>Progress</th>
-              <th>Created</th>
-              <th />
+         
+              <th>firstName</th>
+              <th>lastName</th>
+              <th>chat_id</th>
+              <th>phone</th>
+              <th>email</th>
+               
+              <th>skills</th>
+              <th>experience</th>
+              <th>status</th>
+                <th>role</th>
+              <th>availability</th>
+              <th>username</th>
+              <th>Actions</th>
+ 
             </tr>
           </thead>
           <tbody>
@@ -147,27 +156,69 @@ const TableSampleClients = () => {
       </pre>
        */}
                 <tr key={client.id}>
-                  <td className="border-b-0 lg:w-6 before:hidden">
+                  {/* <td className="border-b-0 lg:w-6 before:hidden">
                     <UserAvatar username={client.firstName} className="w-24 h-24 mx-auto lg:w-6 lg:h-6" />
-                  </td>
+                  </td> */}
                   <td data-label="Company">{client.firstName}</td>
                   <td data-label="Company">{client.lastName}</td>
                   <td data-label="Name">{client.chat_id}</td>
 
                   <td data-label="City">{client.phone}</td>
                   <td data-label="Name">{client.email}</td>
-                  <td data-label="Company">{client.latitude}</td>
-                  <td data-label="City">{client.longitude}</td>
-                  <td data-label="Name">{client.skills}</td>
-                  <td data-label="Company">{client.experience}</td>
-                  <td data-label="City">{client.status}</td>
-                  <td data-label="Name">{client.role}</td>
-                  <td data-label="Company">{client.availability}</td>
-                  <td data-label="City">{client.username}</td>
+             
+                  <td data-label="Name">
+  {client.skills 
+    ? (Array.isArray(client.skills) 
+        ? client.skills.map(skill => skill.name).join(', ') 
+        : (() => {
+            try {
+              const parsedSkills = JSON.parse(client.skills);
+              return Array.isArray(parsedSkills) 
+                ? parsedSkills.map(skill => skill.name).join(', ') 
+                : 'Invalid skills format';
+            } catch (error) {
+              console.error('Error parsing skills:', error);
+              return 'Error parsing skills';
+            }
+          })())
+    : 'No skills'}
+</td>
 
-                  <td data-label="Created" className="lg:w-1 whitespace-nowrap">
+
+
+                  <td data-label="Company">{client.experience}</td>
+                  <td
+  className={`px-4 py-2 border ${
+    client.status === '1' ? 'text-green-500  ' : 'text-red-500  '
+  }`}
+>
+  {client.status === '1' ? 'Active' : 'Inactive'}
+</td>
+
+             <td className="px-4 py-2 border">
+                      {client.role === '1' ? 'Admin' : client.role === '2' ? 'Finance' : 'Technician'}
+                    </td>
+
+<td
+  className={`px-4 py-2 border ${
+    client.availability === '1' ? 'text-green-500  ' : 'text-red-500  '
+  }`}
+>
+  {client.availability === '1' ? 'Available' : 'Not Available'}
+</td>
+                  <td className="px-4 py-2 border">
+                      <a
+                        href={`https://t.me/${client.username}`} // Telegram profile link
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        @{client.username}
+                      </a>
+                    </td>
+                  {/* <td data-label="Created" className="lg:w-1 whitespace-nowrap">
                     <small className="text-gray-500 dark:text-slate-400">{client.created_at}</small>
-                  </td>
+                  </td> */}
                   <td className="before:hidden lg:w-1 whitespace-nowrap">
                     <Buttons type="justify-start lg:justify-end" noWrap>
 
