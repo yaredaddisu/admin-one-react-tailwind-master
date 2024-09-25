@@ -56,16 +56,25 @@ export type Transaction = {
   business: string
 }
 
+ 
 export type Client = {
   id: number
   avatar: string
-  login: string
-  name: string
-  company: string
-  city: string
-  progress: number
-  created: string
-  created_mm_dd_yyyy: string
+  chat_id: string
+  lastName: string
+  firstName: string
+  phone: string
+  email: string
+  latitude: number
+  longitude: string
+  skills: string
+  experience: string
+  status: string
+  role: string
+  availability: string
+  username: string
+  created_at: string
+
 }
 
 export type UserForm = {

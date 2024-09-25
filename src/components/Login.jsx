@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
- 
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -23,7 +22,6 @@ export default function LoginPage() {
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem('token', data.token); // Store the token
-        localStorage.setItem('user', JSON.stringify(data.user));
         router.push('/dashboard'); // Redirect to a protected page
       } else {
         const errorData = await res.json();

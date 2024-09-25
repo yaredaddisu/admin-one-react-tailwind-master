@@ -31,7 +31,7 @@ const TablesPage = () => {
       </Head>
       <SectionMain>
         <SectionTitleLineWithButton icon={mdiTableBorder} title="Technicians" main>
-          <Button
+          {/* <Button
             // href="https://github.com/justboil/admin-one-react-tailwind"
             // target="_blank"
             icon={mdiGithub}
@@ -40,12 +40,12 @@ const TablesPage = () => {
             roundedFull
             small
             onClick={() => setIsModalOpen(true)}
-          />
+          /> */}
         </SectionTitleLineWithButton>
-
+{/* 
         <NotificationBar color="info" icon={mdiMonitorCellphone}>
           <b>Responsive table.</b> Collapses on mobile
-        </NotificationBar>
+        </NotificationBar> */}
         <div>
        
        <Modal isActive={isModalOpen} onCancel={closeModal} title={'Technicians Registration'} buttonColor={'info'} buttonLabel={''} onConfirm={function (): void {
@@ -58,15 +58,15 @@ const TablesPage = () => {
           <TableSampleClients />
         </CardBox>
 
-        <SectionTitleLineWithButton icon={mdiTableOff} title="Empty variation" />
+        {/* <SectionTitleLineWithButton icon={mdiTableOff} title="Empty variation" /> */}
 
-        <NotificationBar color="danger" icon={mdiTableOff}>
+        {/* <NotificationBar color="danger" icon={mdiTableOff}>
           <b>Empty card.</b> When there&apos;s nothing to show
-        </NotificationBar>
+        </NotificationBar> */}
 
-        <CardBox>
+        {/* <CardBox>
           <CardBoxComponentEmpty />
-        </CardBox>
+        </CardBox> */}
       </SectionMain>
     </>
   )

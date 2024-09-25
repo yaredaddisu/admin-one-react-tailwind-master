@@ -24,12 +24,6 @@ export default function LayoutAuthenticated({ children }: Props) {
 
   const router = useRouter()
 
-  // Retrieve values from Redux store
-  const { userEmail, userToken } = useSelector(
-    (state: RootState) => state.main
-  )
-  const userName = useSelector((state: RootState) => state.main.userName)
-  // const userAvatar = useSelector((state: RootState) => state.main.userAvatar)
   useEffect(() => {
     const handleRouteChangeStart = () => {
       setIsAsideMobileExpanded(false)
@@ -38,11 +32,14 @@ export default function LayoutAuthenticated({ children }: Props) {
 
     router.events.on('routeChangeStart', handleRouteChangeStart)
 
+    // If the component is unmounted, unsubscribe
+    // from the event with the `off` method:
     return () => {
       router.events.off('routeChangeStart', handleRouteChangeStart)
     }
   }, [router.events])
 
+ 
 
   const layoutAsidePadding = 'xl:pl-0'
 
