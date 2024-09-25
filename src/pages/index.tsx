@@ -9,6 +9,7 @@ import { gradientBgPurplePink } from '../colors'
 import { appTitle } from '../config'
 import { useAppDispatch } from '../stores/hooks'
 import { setDarkMode } from '../stores/darkModeSlice'
+require('dotenv').config();
 
 const StyleSelectPage = () => {
   const dispatch = useAppDispatch()

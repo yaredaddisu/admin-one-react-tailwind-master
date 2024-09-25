@@ -3,12 +3,19 @@ import db from '../../lib/db'; // Adjust according to your database setup
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs'; // Import bcryptjs
 
-const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { email, password } = req.body;
-
+    
+    const SECRET_KEY = process.env.JWT_SECRET_KEY;
+    console.log('Secret Key:', SECRET_KEY); // Debug to check if the key is being loaded correctly
+    
+    if (!SECRET_KEY) {
+      console.error('JWT_SECRET_KEY is not defined');
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+    
     try {
        
 
