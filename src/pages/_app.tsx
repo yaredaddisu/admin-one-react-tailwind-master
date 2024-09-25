@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, } from 'react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import Script from 'next/script';
@@ -22,22 +22,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if the user is logged in
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
-    // If a user tries to access the login page and they are already logged in, redirect them to the dashboard
-    if (router.pathname === '/login' && token) {
+     if (router.pathname === '/login' && token) {
       router.push('/dashboard');
     }
 
-    // If the user is not logged in and they try to access a protected page, redirect them to the login page
-    if (!token && router.pathname !== '/login') {
+     if (!token && router.pathname !== '/login') {
       router.push('/login');
     }
-  }, [router.pathname]);
+  }, [router]);
 
-  // Use the layout defined at the page level, if available
-  const getLayout = Component.getLayout || ((page) => page);
+   const getLayout = Component.getLayout || ((page) => page);
 
   const title = `Admin One React Tailwind free`;
   const description = 'Admin One - free React Next Tailwind dashboard with TypeScript and dark mode';

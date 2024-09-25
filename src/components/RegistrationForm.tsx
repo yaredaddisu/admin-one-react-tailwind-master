@@ -2,12 +2,10 @@ import React, { useState, useEffect, ReactElement } from 'react';
 import FormField from './Form/Field';
 import CardBox from './CardBox';
 import LayoutAuthenticated from '../layouts/Authenticated';
-import { useDispatch } from 'react-redux';
-import { registerUser, updateUser } from '../store/authSlice'; // Import your Redux actions
+ 
 import axios from 'axios';
-import { Field } from 'formik';
-import FormCheckRadio from './Form/CheckRadio';
-import FormCheckRadioGroup from './Form/CheckRadioGroup';
+ 
+ 
 interface UserFormData {
   id: string;
   firstName: string;
@@ -65,12 +63,12 @@ const [formData, setFormData] = useState<UserFormData>({
   const [errors, setErrors] = useState({});
   const [isLoading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
+  // const [isEditing, setIsEditing] = useState(false);
 
  
   useEffect(() => {
     if (userData) {
-      setIsEditing(true);
+      // setIsEditing(true);
       setFormData({
         id: userData.id || null,
         firstName: userData.firstName || '',
@@ -146,15 +144,10 @@ const [formData, setFormData] = useState<UserFormData>({
         .catch((err) => {
           const response = err.response;
           if (response && response.status === 422) {
-            const errors = response.data.errors;
+              console.log(response)
           
             // Iterate over each field in the errors object
-            Object.keys(errors).forEach((field) => {
-              // Each field contains an array of error messages, loop through the array
-              errors[field].forEach((errorMessage) => {
-               
-              });
-            });
+            
           }
           
           setLoading(false);
@@ -172,15 +165,10 @@ const [formData, setFormData] = useState<UserFormData>({
         .catch((err) => {
           const response = err.response;
            if (response && response.status === 422) {
-            const errors = response.data.errors;
+            
           
-            // Iterate over each field in the errors object
-            Object.keys(errors).forEach((field) => {
-              // Each field contains an array of error messages, loop through the array
-              errors[field].forEach((errorMessage) => {
-               
-              });
-            });
+            console.log(response)
+  
           }
           
           setLoading(false);

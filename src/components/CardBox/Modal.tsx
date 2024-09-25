@@ -2,8 +2,7 @@ import { mdiClose } from '@mdi/js'
 import { ReactNode } from 'react'
 import type { ColorButtonKey } from '../../interfaces'
 import Button from '../Button'
-import Buttons from '../Buttons'
-import CardBox from '.'
+ import CardBox from '.'
 import CardBoxComponentTitle from './Component/Title'
 import OverlayLayer from '../OverlayLayer'
 
@@ -19,11 +18,10 @@ type Props = {
 
 const CardBoxModal = ({
   title,
-  buttonColor,
-  buttonLabel,
+ 
   isActive,
   children,
-  onConfirm,
+ 
   onCancel,
 }: Props) => {
   if (!isActive) {

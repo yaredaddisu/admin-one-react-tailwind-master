@@ -11,9 +11,7 @@ import FooterBar from '../components/FooterBar'
 import FormField from '../components/Form/Field'
 import { Field, Form, Formik } from 'formik'
 import { useRouter } from 'next/router'
-import { useSelector } from 'react-redux' // Import useSelector hook
-import { RootState } from '../stores/store' // Import your RootState type
-
+ 
 type Props = {
   children: ReactNode
 }

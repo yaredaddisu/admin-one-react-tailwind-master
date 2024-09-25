@@ -69,7 +69,7 @@ export type Client = {
   role: string;
   status: string;
   availability: string;
-  skills: any[];
+  skills:  [];
   experience: string;
 
 

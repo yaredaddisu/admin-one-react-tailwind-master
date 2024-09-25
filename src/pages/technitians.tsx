@@ -1,11 +1,11 @@
-import { mdiGithub, mdiMonitorCellphone, mdiTableBorder, mdiTableOff } from '@mdi/js'
+import {  mdiTableBorder } from '@mdi/js'
 import Head from 'next/head'
 import React, { ReactElement, useState } from 'react'
-import Button from '../components/Button'
+ 
 import CardBox from '../components/CardBox'
-import CardBoxComponentEmpty from '../components/CardBox/Component/Empty'
+ 
 import LayoutAuthenticated from '../layouts/Authenticated'
-import NotificationBar from '../components/NotificationBar'
+ 
 import SectionMain from '../components/Section/Main'
 import SectionTitleLineWithButton from '../components/Section/TitleLineWithButton'
 import TableSampleClients from '../components/Table/SampleClients'
@@ -17,9 +17,7 @@ import RegistrationForm from '../components/RegistrationForm'
 
 const TablesPage = () => {
 
-    const addTechnicians  = () => {
-        alert("hello yared")
-    }
+   
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const closeModal = () => setIsModalOpen(false);

@@ -1,15 +1,13 @@
-import { mdiCheckDecagram, mdiEye, mdiGithub, mdiPlus, mdiTableBorder, mdiTableOff, mdiTrashCan } from '@mdi/js'
+import {  mdiEye , mdiPlus, mdiTableOff, mdiTrashCan } from '@mdi/js'
 import React, { useEffect, useState } from 'react'
-import { useSampleClients } from '../../hooks/sampleData'
+ 
 import { Client } from '../../interfaces'
 import Button from '../Button'
 import Buttons from '../Buttons'
 import CardBoxModal from '../CardBox/Modal'
-import UserAvatar from '../UserAvatar'
-import { Formik, Form, Field } from 'formik'
+ 
 import CardBox from '../CardBox'
-import FormCheckRadio from '../Form/CheckRadio'
-import PillTag from '../PillTag'
+ 
 import UserAvatarCurrentUser from '../UserAvatar/CurrentUser'
 import axios from 'axios'
 import Modal from '../Modal'
@@ -169,12 +167,12 @@ const [userData, setUser] = useState<Client | null>(null); // Use null or initia
                   <td data-label="Name">
   {client.skills 
     ? (Array.isArray(client.skills) 
-        ? client.skills.map(skill => skill.name).join(', ') 
+        ? (client.skills as { name: string }[]).map(skill => skill.name).join(', ') 
         : (() => {
             try {
               const parsedSkills = JSON.parse(client.skills);
               return Array.isArray(parsedSkills) 
-                ? parsedSkills.map(skill => skill.name).join(', ') 
+                ? (parsedSkills as { name: string }[]).map(skill => skill.name).join(', ')
                 : 'Invalid skills format';
             } catch (error) {
               console.error('Error parsing skills:', error);
@@ -183,6 +181,7 @@ const [userData, setUser] = useState<Client | null>(null); // Use null or initia
           })())
     : 'No skills'}
 </td>
+
 
 
 

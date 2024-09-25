@@ -89,7 +89,7 @@
 //     res.status(405).end(`Method ${req.method} Not Allowed`);
 //   }
 // }
-import { createUser, getAllUsers, updateUser, getUserById, deleteUserById } from './models/users';
+import { createUser, getAllUsers, updateUser  } from './models/users';
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
