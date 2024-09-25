@@ -17,7 +17,7 @@ type Props = {
 export default function NavBarItem({ item }: Props) {
   const dispatch = useAppDispatch()
 
-  const userName = useAppSelector((state) => state.main.userName)
+const userName = useAppSelector((state) => state.main?.userName);
 
   const [isDropdownActive, setIsDropdownActive] = useState(false)
 

@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "src/pages/login.jsx", "src/pages/login.jsx", "src/store/authSlice.js"  ],
   "exclude": [
     "node_modules"
   ]

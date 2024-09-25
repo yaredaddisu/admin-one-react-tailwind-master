@@ -1,18 +1,8 @@
 /**
  * @type {import('next').NextConfig}
  */
- const nextConfig = {
-  basePath: "/admin-one-react-tailwind",
-  async redirects() {
-    return [
-      {
-          source: '/',
-          destination: '/admin-one-react-tailwind',
-          basePath: false,
-          permanent: false
-      }
-    ]
-  },
+const nextConfig = {
+  // No redirects required, so we remove the redirects function
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -22,6 +12,6 @@
       },
     ],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;
