@@ -9,6 +9,12 @@ import Head from 'next/head';
 import { Provider } from 'react-redux';
 import { store } from '../stores/store';
 import '../css/main.css';
+import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
+import 'primereact/resources/primereact.min.css'; // Core CSS
+import 'primeicons/primeicons.css'; // Icons
+import 'primeflex/primeflex.css'; // Optional CSS utility classes
+// In _app.js or MapComponent.jsx
+import 'leaflet/dist/leaflet.css';
 
 export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;

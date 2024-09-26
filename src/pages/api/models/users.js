@@ -200,157 +200,156 @@ async function updateUser(userId, updatedData) {
     
   //   return null; // Return null if no user is found
   // }
-async function getUserById(userId) {
-  try {
-    // SQL query with joins
-    const [rows] = await pool.execute(`
-      SELECT 
-        u.id, 
-        u.firstName, 
-        u.lastName, 
-        u.email, 
-        u.phone, 
-        u.username, 
-        u.latitude,
-        u.longitude,
-        u.skills,
-        u.experience,
-        u.status,
-        u.role,
-        u.availability,
-        u.email_verified_at,
-        u.created_at,
-        u.updated_at,
-        u.chat_id, /* User chat_id */
-        j.id AS job_id, 
-        j.title AS job_title, 
-        j.company AS job_company,
-        j.location AS job_location,
-        j.status AS job_status,
-        j.user_id AS job_user_id,
-        j.Reference AS job_reference,
-        j.salary AS job_salary,
-        j.chat_id AS job_chat_id,
-        j.description AS job_description,
-        j.latitude AS job_latitude,
-        j.longitude AS job_longitude,
-        j.created_at AS job_created_at,
-        j.updated_at AS job_updated_at,
-        jt.id AS jt_id,
-        jt.technician_id,
-        jt.departureLocation,
-        jt.dispatchTime,
-        jt.eta,
-        jt.driver,
-        jt.status AS jt_status,
-        jt.messageId,
-        jt.description AS jt_description,
-        jt.chat_id AS jt_chat_id,
-        jt.created_at AS jt_created_at,
-        jt.updated_at AS jt_updated_at
-      FROM users u
-      LEFT JOIN jobs j ON u.id = j.technician_id
-      LEFT JOIN job_technicians jt ON j.id = jt.job_id
-      WHERE u.id = ?
-    `, [userId]);
-
-    console.log('Raw query result:', rows); // Debugging output
-
-    if (rows.length > 0) {
-      // Initialize user object
-      const user = {
-        id: rows[0].id,
-        firstName: rows[0].firstName,
-        lastName: rows[0].lastName,
-        email: rows[0].email,
-        phone: rows[0].phone,
-        username: rows[0].username,
-        latitude: rows[0].latitude,
-        longitude: rows[0].longitude,
-        experience: rows[0].experience,
-        status: rows[0].status,
-        skills: rows[0].skills,
-        role: rows[0].role,
-        availability: rows[0].availability,
-        email_verified_at: rows[0].email_verified_at,
-        created_at: rows[0].created_at,
-        updated_at: rows[0].updated_at,
-        chat_id: rows[0].chat_id,
-        jobs: []
-      };
-
-      // Aggregate job information and job_technicians
-      rows.forEach(row => {
-        if (row.job_id) {
-          const existingJob = user.jobs.find(job => job.id === row.job_id);
-
-          if (existingJob) {
-            // If job exists, add to job_technicians if not already added
-            if (row.technician_id && !existingJob.job_technicians.find(jt => jt.technician_id === row.technician_id)) {
-              existingJob.job_technicians.push({
-                id: row.jt_id,
-                technician_id: row.technician_id,
-                job_id: row.job_id,
-                departureLocation: row.departureLocation,
-                dispatchTime: row.dispatchTime,
-                eta: row.eta,
-                driver: row.driver,
-                status: row.jt_status,
-                created_at: row.jt_created_at,
-                updated_at: row.jt_updated_at,
-                chat_id: row.jt_chat_id,
-                messageId: row.messageId,
-                description: row.jt_description
+  async function getUserById(userId) {
+    try {
+      // SQL query with joins
+      const [rows] = await pool.execute(`
+        SELECT 
+          u.id, 
+          u.firstName, 
+          u.lastName, 
+          u.email, 
+          u.phone, 
+          u.username, 
+          u.latitude,
+          u.longitude,
+          u.skills,
+          u.experience,
+          u.status,
+          u.role,
+          u.availability,
+          u.email_verified_at,
+          u.created_at,
+          u.updated_at,
+          u.chat_id, /* User chat_id */
+          j.id AS job_id, 
+          j.title AS job_title, 
+          j.company AS job_company,
+          j.location AS job_location,
+          j.status AS job_status,
+          j.user_id AS job_user_id,
+          j.Reference AS job_reference,
+          j.salary AS job_salary,
+          j.chat_id AS job_chat_id,
+          j.description AS job_description,
+          j.latitude AS job_latitude,
+          j.longitude AS job_longitude,
+          j.created_at AS job_created_at,
+          j.updated_at AS job_updated_at,
+          jt.id AS jt_id,
+          jt.technician_id,
+          jt.departureLocation,
+          jt.dispatchTime,
+          jt.eta,
+          jt.driver,
+          jt.status AS jt_status,
+          jt.messageId,
+          jt.description AS jt_description,
+          jt.chat_id AS jt_chat_id,
+          jt.created_at AS jt_created_at,
+          jt.updated_at AS jt_updated_at
+        FROM users u
+        LEFT JOIN jobs j ON u.id = j.technician_id
+        LEFT JOIN job_technicians jt ON j.id = jt.job_id
+        WHERE u.id = ?
+      `, [userId]);
+  
+      console.log('Raw query result:', rows); // Debugging output
+  
+      if (rows.length > 0) {
+        // Initialize user object
+        const user = {
+          id: rows[0].id,
+          firstName: rows[0].firstName,
+          lastName: rows[0].lastName,
+          email: rows[0].email,
+          phone: rows[0].phone,
+          username: rows[0].username,
+          latitude: rows[0].latitude,
+          longitude: rows[0].longitude,
+          experience: rows[0].experience,
+          status: rows[0].status,
+          skills: rows[0].skills,
+          role: rows[0].role,
+          availability: rows[0].availability,
+          email_verified_at: rows[0].email_verified_at,
+          created_at: rows[0].created_at,
+          updated_at: rows[0].updated_at,
+          chat_id: rows[0].chat_id,
+          jobs: []
+        };
+  
+        // Aggregate job information and job_technicians
+        rows.forEach(row => {
+          if (row.job_id) {
+            const existingJob = user.jobs.find(job => job.id === row.job_id);
+  
+            if (existingJob) {
+              // If job exists, add to job_technicians if not already added
+              if (row.technician_id && !existingJob.job_technicians.find(jt => jt.technician_id === row.technician_id)) {
+                existingJob.job_technicians.push({
+                  id: row.jt_id,
+                  technician_id: row.technician_id,
+                  job_id: row.job_id,
+                  departureLocation: row.departureLocation,
+                  dispatchTime: row.dispatchTime,
+                  eta: row.eta,
+                  driver: row.driver,
+                  status: row.jt_status,
+                  created_at: row.jt_created_at,
+                  updated_at: row.jt_updated_at,
+                  chat_id: row.jt_chat_id,
+                  messageId: row.messageId,
+                  description: row.jt_description
+                });
+              }
+            } else {
+              // Add new job along with job_technicians
+              user.jobs.push({
+                id: row.job_id,
+                title: row.job_title,
+                company: row.job_company,
+                location: row.job_location,
+                status: row.job_status,
+                user_id: row.job_user_id,
+                Reference: row.job_reference,
+                salary: row.job_salary,
+                chat_id: row.job_chat_id,
+                description: row.job_description,
+                latitude: row.job_latitude,
+                longitude: row.job_longitude,
+                created_at: row.job_created_at,
+                updated_at: row.job_updated_at,
+                technician_id: row.technician_id, // For jobs themselves
+                job_technicians: row.technician_id ? [{
+                  id: row.jt_id,
+                  technician_id: row.technician_id,
+                  job_id: row.job_id,
+                  departureLocation: row.departureLocation,
+                  dispatchTime: row.dispatchTime,
+                  eta: row.eta,
+                  driver: row.driver,
+                  status: row.jt_status,
+                  created_at: row.jt_created_at,
+                  updated_at: row.jt_updated_at,
+                  chat_id: row.jt_chat_id,
+                  messageId: row.messageId,
+                  description: row.jt_description
+                }] : []
               });
             }
-          } else {
-            // Add new job along with job_technicians
-            user.jobs.push({
-              id: row.job_id,
-              title: row.job_title,
-              company: row.job_company,
-              location: row.job_location,
-              status: row.job_status,
-              user_id: row.job_user_id,
-              Reference: row.job_reference,
-              salary: row.job_salary,
-              chat_id: row.job_chat_id,
-              description: row.job_description,
-              latitude: row.job_latitude,
-              longitude: row.job_longitude,
-              created_at: row.job_created_at,
-              updated_at: row.job_updated_at,
-              technician_id: row.technician_id, // For jobs themselves
-              job_technicians: row.technician_id ? [{
-                id: row.jt_id,
-                technician_id: row.technician_id,
-                job_id: row.job_id,
-                departureLocation: row.departureLocation,
-                dispatchTime: row.dispatchTime,
-                eta: row.eta,
-                driver: row.driver,
-                status: row.jt_status,
-                created_at: row.jt_created_at,
-                updated_at: row.jt_updated_at,
-                chat_id: row.jt_chat_id,
-                messageId: row.messageId,
-                description: row.jt_description
-              }] : []
-            });
           }
-        }
-      });
-
-      return user; // Return the user record with job details if found
+        });
+  
+        return user; // Return the user record with job details if found
+      }
+  
+      return null; // Return null if no user is found
+    } catch (error) {
+      console.error('Error fetching user by ID:', error);
+      throw error; // Optionally re-throw the error to be handled by the caller
     }
-
-    return null; // Return null if no user is found
-  } catch (error) {
-    console.error('Error fetching user by ID:', error);
-    throw error; // Optionally re-throw the error to be handled by the caller
   }
-}
-
   
 //   const deleteUserById = async (userId) => {
 //     const query = 'DELETE FROM users WHERE id = ?';
