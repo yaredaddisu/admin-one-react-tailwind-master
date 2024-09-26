@@ -31,7 +31,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
      if (!token && router.pathname !== '/login') {
       router.push('/login');
     }
-  }, [router]);
+  }, [router.pathname]);
 
    const getLayout = Component.getLayout || ((page) => page);
 

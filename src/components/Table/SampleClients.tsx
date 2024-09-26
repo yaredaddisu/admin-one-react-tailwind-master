@@ -14,10 +14,12 @@ import Modal from '../Modal'
 import RegistrationForm from '../RegistrationForm'
 import SectionTitleLineWithButton from '../Section/TitleLineWithButton'
 import NotificationBar from '../NotificationBar'
+import { useRouter } from 'next/router'
 
 const TableSampleClients = () => {
   // const clients  = useSampleClients()
   const [clients, setUsers] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
    getUsers();
@@ -73,6 +75,11 @@ const [userData, setUser] = useState<Client | null>(null); // Use null or initia
     setUser(null); 
   };
 
+  function viewHandle(id: number): void {
+ 
+     router.push(`/userdetails/${id}`);
+  }
+
   return (
     <><div className="mt-6 mr-5">
       <SectionTitleLineWithButton icon="" title=" " main >
@@ -126,7 +133,7 @@ const [userData, setUser] = useState<Client | null>(null); // Use null or initia
           </div>
         </CardBox>
         
-        <table>
+        <table className="overflow-x-auto">
           <thead>
             <tr>
          
@@ -220,8 +227,12 @@ const [userData, setUser] = useState<Client | null>(null); // Use null or initia
                   </td> */}
                   <td className="before:hidden lg:w-1 whitespace-nowrap">
                     <Buttons type="justify-start lg:justify-end" noWrap>
-
-
+ 
+   <Button
+                        color="info"
+                        icon={mdiEye}
+                        onClick={() => viewHandle(client.id)}
+                        small />
                       <Button
                         color="info"
                         icon={mdiEye}

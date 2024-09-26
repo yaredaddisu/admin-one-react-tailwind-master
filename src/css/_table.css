@@ -2,47 +2,48 @@
   table {
     @apply w-full;
   }
-  
+
   thead {
-    @apply hidden lg:table-header-group;
+    @apply hidden sm:table-header-group; /* Show the table header on screens above 600px */
   }
-  
+
   tr {
     @apply max-w-full block relative border-b-4 border-gray-100
-      lg:table-row lg:border-b-0 dark:border-slate-800;
+      sm:table-row sm:border-b-0 dark:border-slate-800; /* Use normal table row display above 600px */
   }
-  
+
   tr:last-child {
     @apply border-b-0;
   }
-  
+
   td:not(:first-child) {
-    @apply lg:border-l lg:border-t-0 lg:border-r-0 lg:border-b-0 lg:border-gray-100 lg:dark:border-slate-700;
+    @apply sm:border-l sm:border-t-0 sm:border-r-0 sm:border-b-0 sm:border-gray-100 sm:dark:border-slate-700;
   }
-  
+
   th {
-    @apply lg:text-left lg:p-3;
+    @apply text-xs sm:text-left sm:p-3; /* Apply normal padding and alignment above 600px */
   }
-  
+
   td {
-    @apply flex justify-between text-right py-3 px-4 align-top border-b border-gray-100
-      lg:table-cell lg:text-left lg:p-3 lg:align-middle lg:border-b-0 dark:border-slate-800;
+    @apply flex justify-between text-right py-2 px-3 text-xs align-top border-b border-gray-100
+      sm:table-cell sm:text-left sm:p-3 sm:align-middle sm:border-b-0 dark:border-slate-800; /* Switch to table cell layout above 600px */
   }
-  
+
   td:last-child {
     @apply border-b-0;
   }
-  
-  tbody tr, tbody tr:nth-child(odd) {
-    @apply lg:hover:bg-gray-100 lg:dark:hover:bg-slate-700/70;
-  }
-  
+
+  tbody tr,
   tbody tr:nth-child(odd) {
-    @apply lg:bg-gray-100/50 lg:dark:bg-slate-800/50;
+    @apply sm:hover:bg-gray-100 sm:dark:hover:bg-slate-700/70; /* Hover effect only above 600px */
   }
-  
+
+  tbody tr:nth-child(odd) {
+    @apply sm:bg-gray-100/50 sm:dark:bg-slate-800/50; /* Background color only above 600px */
+  }
+
   td:before {
     content: attr(data-label);
-    @apply font-semibold pr-3 text-left lg:hidden;
+    @apply font-semibold text-xs pr-2 text-left sm:hidden; /* Hide data-label above 600px */
   }
 }

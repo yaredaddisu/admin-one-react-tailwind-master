@@ -1,4 +1,4 @@
-export const containerMaxW = ''
+export const containerMaxW = ' '
 
 export const appTitle = 'Technician Management'
 

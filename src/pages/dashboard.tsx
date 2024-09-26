@@ -8,7 +8,7 @@ import {
   mdiReload,
 } from '@mdi/js'
 import Head from 'next/head'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { ReactElement } from 'react'
 import Button from '../components/Button'
 import LayoutAuthenticated from '../layouts/Authenticated'
@@ -26,6 +26,7 @@ import ChartLineSample from '../components/ChartLineSample'
 import NotificationBar from '../components/NotificationBar'
 import TableSampleClients from '../components/Table/SampleClients'
 import { getPageTitle } from '../config'
+import { useRouter } from 'next/router'
 
 const DashboardPage = () => {
   const { clients } = useSampleClients()
@@ -40,6 +41,19 @@ const DashboardPage = () => {
 
     setChartData(sampleChartData())
   }
+  const router = useRouter();
+
+  useEffect(() => {
+     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+     if (router.pathname === '/login' && token) {
+      router.push('/dashboard');
+    }
+
+     if (!token && router.pathname !== '/login') {
+      router.push('/login');
+    }
+  }, [router.pathname]);
 
   return (
     <>
